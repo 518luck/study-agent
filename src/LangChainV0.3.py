@@ -16,11 +16,12 @@
 """
 
 import os
+
 from dotenv import load_dotenv  # 从 .env 文件加载环境变量，避免把 API Key 写进代码
-from pydantic import SecretStr
 from langchain_openai import (
     ChatOpenAI,
 )  # OpenAI 兼容的聊天模型封装，可配合 base_url 接 DeepSeek 等兼容接口
+from pydantic import SecretStr
 
 # ========== 1. 大模型客户端初始化（.env + 环境变量，推荐写法） ==========
 
@@ -28,7 +29,9 @@ load_dotenv(encoding="utf-8")  # encoding 指定 utf-8，避免 .env 中中文�
 
 llm = ChatOpenAI(
     model="deepseek-v4-flash",  # DeepSeek 官方当前模型；换成 deepseek-v4-pro 即为旗舰版
-     api_key=SecretStr(os.getenv("DEEPSEEK_API_KEY") or ""), # 从 .env 读取（自己粘贴的密钥）
+    api_key=SecretStr(
+        os.getenv("DEEPSEEK_API_KEY") or ""
+    ),  # 从 .env 读取（自己粘贴的密钥）
     base_url="https://api.deepseek.com",  # DeepSeek 官方 OpenAI 兼容接口地址
 )
 
