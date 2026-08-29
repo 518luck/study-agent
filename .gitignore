@@ -14,3 +14,7 @@ wheels/
 .env.*
 !.env.example
 
+.DS_Store
+.DS_Store
+pyproject.toml
+uv.lock
