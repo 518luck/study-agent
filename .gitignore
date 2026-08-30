@@ -18,3 +18,4 @@ wheels/
 .DS_Store
 pyproject.toml
 uv.lock
+uv.lock
