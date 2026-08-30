@@ -15,6 +15,7 @@ dependencies = [
     "langchain-ollama>=1.1.0",
     "langchain-openai>=1.6.0",
     "langgraph>=1.2.11",
+    "loguru>=0.7.3",
     "openai>=3.5.0",
     "python-dotenv>=1.2.3",
 ]
