@@ -27,6 +27,12 @@ study-agent = "study_agent:main"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
 
+[tool.pyright]
+# 让 pyright 使用项目 .venv 的解释器找依赖；uvx 临时环境里没有本项目包，
+# 不配的话所有第三方 import 都会被误报 reportMissingImports
+venvPath = "."
+venv = ".venv"
+
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]
 build-backend = "uv_build"
