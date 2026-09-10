@@ -24,6 +24,16 @@
 - 报错处理流程：读完整报错 → 定位原因（必要时查官方文档/API）→ 修复 → 重新运行验证。
 - 交付时报告：实跑结果（成功输出或报错摘要）+ 验证过哪些命令；不夸大"已验证"。
 
+## 教程文档（示例代码的出处）
+
+- **本地原文（优先查这个）**：`ai-agents-from-zero/`（项目根目录下，浅克隆，已在 .gitignore 中忽略，不参与本仓库版本管理）。
+  - 章节文件命名：`章节号-标题.md`，如 `15-LCEL与链式调用.md`；目录结构见 `_sidebar.md`。
+  - 按标题定位小节：`grep -n "^## \|^### " ai-agents-from-zero/15-LCEL与链式调用.md`。
+  - 本地预览：在该目录执行 `python -m http.server 8000`（docsify 为运行时渲染，不支持 file:// 直接打开）。
+- **在线站点**：https://didilili.github.io/ai-agents-from-zero/#/
+- **源码仓库**：https://github.com/didilili/ai-agents-from-zero
+- `src/` 各示例头部「对应教程章节」注释须以此文档为准；写/改章节号前先查原文核对（教程结构更新过，部分旧注释的章节号已与现行版本不一致）。
+
 ## 项目环境备忘
 
 - Python 3.14，uv 管理依赖（pyproject.toml），`uv run` 执行脚本；.env 存放 API key。
