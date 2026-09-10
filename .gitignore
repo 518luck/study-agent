@@ -15,9 +15,7 @@ wheels/
 !.env.example
 
 .DS_Store
-.DS_Store
 pyproject.toml
-uv.lock
 uv.lock
 
 # 教程文档克隆（外部仓库，不纳入本仓库版本管理）
