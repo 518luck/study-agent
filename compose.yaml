@@ -1,0 +1,44 @@
+# 本地开发用的 Redis（教程第 16 章「记忆与对话历史」的 Redis 持久化案例需要）
+#
+#   启动：docker compose up -d
+#   查看：docker compose ps
+#   停止：docker compose down            （数据保留在 volume 里）
+#   清空：docker compose down -v         （连数据一起删，谨慎）
+#   进入命令行：docker compose exec redis redis-cli
+#
+# 说明：教程里用的是 `docker run --name docker-redis-1 -p 6379:6379 redis`，
+# 效果一样；写成 compose 文件的好处是版本、端口、持久化配置都固定下来，换机器一条命令就能起来。
+
+services:
+  redis:
+    image: redis:8.10-alpine
+    container_name: study-agent-redis
+    ports:
+      # 只绑本机回环 127.0.0.1，不暴露到局域网（不加前缀会绑 0.0.0.0）
+      - "127.0.0.1:6379:6379"
+    # 开启 AOF 持久化：重启容器/机器后历史还在（教程 5.2 讲的"重启不丢"就靠它 + volume）
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # 可选：图形化查看 Redis 数据（像 RedisInsight），需要时取消下面注释再 up
+  # 访问 http://localhost:5540
+  # redisinsight:
+  #   image: redis/redisinsight:latest
+  #   container_name: study-agent-redisinsight
+  #   ports:
+  #     - "127.0.0.1:5540:5540"
+  #   volumes:
+  #     - redisinsight-data:/data
+  #   depends_on:
+  #     - redis
+
+volumes:
+  redis-data:
+  # redisinsight-data:
