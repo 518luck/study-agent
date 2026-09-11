@@ -27,6 +27,22 @@ services:
       timeout: 3s
       retries: 5
 
+  # 第 18 章向量库案例需要：普通 redis 镜像没有 RediSearch 模块，建向量索引会报错，
+  # 所以单独跑一个 Redis Stack（自带 search / JSON / bloom 等模块）在 26379 端口
+  redis-stack:
+    image: redis/redis-stack-server:latest
+    container_name: study-agent-redis-stack
+    ports:
+      - "127.0.0.1:26379:6379"
+    volumes:
+      - redis-stack-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   # 可选：图形化查看 Redis 数据（像 RedisInsight），需要时取消下面注释再 up
   # 访问 http://localhost:5540
   # redisinsight:
@@ -41,4 +57,5 @@ services:
 
 volumes:
   redis-data:
+  redis-stack-data:
   # redisinsight-data:

@@ -11,7 +11,8 @@
   1）请求地址从厂商私有网关换成 https://api.siliconflow.cn/v1（embeddings 路径由 SDK 自动拼接）；
   2）OpenAI SDK 调用失败会直接抛异常，不再需要自己判断 status_code == 200。
 - 本案例默认用 BAAI/bge-m3：1024 维、单条最长 8192 token，中文表现好且目前处于免费/极低价档，适合作为入门模型。
-- input 可传单个字符串或字符串列表（硅基流动单次最多 32 条）；向量在 data[0].embedding，向量长度即模型维度。
+- input 可传单个字符串或字符串列表（文档写单次最多 32 条，但实测 33/50/100 条也能过，该上限没被强制执行）；
+  向量在 data[0].embedding，向量长度即模型维度。
 - 换模型只需改 model：Qwen/Qwen3-Embedding-0.6B（默认 1024 维）/ 4B（2560 维）/ 8B（4096 维），
   Qwen3 系列额外支持 dimensions 参数自定义输出维度（如 dimensions=1024），bge 系列不支持该参数。
 
