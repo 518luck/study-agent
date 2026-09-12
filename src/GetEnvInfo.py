@@ -8,9 +8,10 @@
 便于排查「装错版本」「没进虚拟环境」或「解释器不是当前项目那一个」等问题。无需 API Key，可直接运行。
 """
 
+import sys  # 获取 Python 解释器信息
+
 import langchain  # 核心框架（Chain、Agent、Memory 等）
 import langchain_community  # 社区扩展（部分集成、第三方工具等）
-import sys  # 获取 Python 解释器信息
 
 # LangChain 核心包版本号（需与教程/文档要求的版本区间一致）
 print("langchainVersion:  " + langchain.__version__)

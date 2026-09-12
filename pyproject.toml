@@ -17,6 +17,7 @@ dependencies = [
     "langchain-redis>=0.2.5",
     "langgraph>=1.2.11",
     "loguru>=0.7.3",
+    "mcp>=1.28,<2",
     "openai>=3.5.0",
     "python-dotenv>=1.2.3",
     "redis>=8.1.0",
