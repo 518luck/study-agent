@@ -13,7 +13,7 @@
 """
 
 import uuid
-from typing import TypedDict
+from typing import TypedDict, cast
 
 from langgraph.graph import END, START, StateGraph
 
@@ -25,13 +25,16 @@ class HelloState(TypedDict):
 
 
 # 2. 定义节点函数 Node：接收当前 state，返回对 state 的「部分更新」字典
-def greet(helloState: HelloState) -> dict:
-    name = helloState["name"]
+# 注意：参数名必须叫 state（不能写成 helloState）——LangGraph 的节点函数协议就要求这个名字，
+# 叫别的名字运行没问题，但 pyright 类型检查会报 Parameter name mismatch。
+# 返回类型写成 dict[str, str] 而不是裸 dict：明确告诉类型检查器返回的字段类型。
+def greet(state: HelloState) -> dict[str, str]:
+    name = state["name"]
     return {"greeting": f"你好,{name}"}
 
 
-def add_emoji(helloState: HelloState) -> dict:
-    greeting = helloState["greeting"]
+def add_emoji(state: HelloState) -> dict[str, str]:
+    greeting = state["greeting"]
     return {"greeting": greeting + "  。。。😄"}
 
 
@@ -48,7 +51,11 @@ graph.add_edge("add_emoji", END)
 app = graph.compile()
 
 # 5. 运行：invoke 只接收一个核心参数——初始状态字典
-result = app.invoke({"name": "z3"})
+# 这里用 cast 断言成 HelloState：运行时只提供 name 字段（greeting 由节点补上），
+# 但类型检查器按"完整状态"要求所有字段，cast 是告诉它"这里按 HelloState 对待"的标准做法。
+# 用法与 Agent2Agent.py 里 cast(StructuredTool, ...) 完全一致。
+initial_state = cast(HelloState, {"name": "z3"})
+result = app.invoke(initial_state)
 print(result)
 print(result["greeting"])
 
@@ -69,7 +76,6 @@ print(f"图片已生成：{output_path}")
 【输出示例】
 {'name': 'z3', 'greeting': '你好,z3  。。。😄'}
 你好,z3  。。。😄
-（图中 __start__ / __end__ 及 Python 属性命名约定见文件头「知识点速览」。）
 
 +-----------+
 | __start__ |
@@ -92,7 +98,7 @@ print(f"图片已生成：{output_path}")
  +---------+
  | __end__ |
  +---------+
-None
+None                      ← print_ascii() 自己就打印了，外面那层 print() 打印的是它的返回值 None
 ==================================================
 ---
 config:
