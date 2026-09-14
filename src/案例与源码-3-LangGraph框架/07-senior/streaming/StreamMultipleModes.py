@@ -7,7 +7,8 @@
 - stream_mode 为列表时，每次迭代得到 (mode, chunk) 元组，便于前端按类型分别处理。
 - `values` 看“全貌”，`updates` 看“增量”；`debug` 输出更细，适合调试，不适合直接当业务输出。
 - 这个案例的核心价值是帮你建立“同一张图可以同时暴露多种观察视角”，而不是背住某个模式名。
-- 节点函数返回的字典仍按 State 的 Reducer 合并；本例字段未显式 Annotated，默认就是覆盖更新。
+- 节点函数返回的是“部分更新”字典（只写本节点要改的字段），不是完整 State，所以返回类型标 `-> dict`；
+  未写到的字段由 LangGraph 沿用旧值，字段未显式 Annotated 时默认按“覆盖”合并。
 """
 
 from typing import TypedDict
@@ -19,17 +20,17 @@ class DiliState(TypedDict):
     question: str
     answer: str
     confidence: float  # 置信度分数
-    steps: list
+    steps: list[str]
 
 
-def think(state: DiliState) -> DiliState:
+def think(state: DiliState) -> dict:
     """思考节点：模拟多步推理，写入 steps。"""
     question = state["question"]
     steps = [f"分析问题: {question}", "检索相关知识", "形成初步答案"]
     return {"steps": steps}
 
 
-def respond(state: DiliState) -> DiliState:
+def respond(state: DiliState) -> dict:
     """回应节点：根据关键词生成答案与置信度。"""
     question = state["question"]
     if "天气" in question:
@@ -48,7 +49,7 @@ def respond(state: DiliState) -> DiliState:
     }
 
 
-def reflect(state: DiliState) -> DiliState:
+def reflect(state: DiliState) -> dict:
     """反思节点：在 steps 上追加校验与结论。"""
     answer = state["answer"]
     confidence = state["confidence"]
@@ -84,7 +85,7 @@ def main():
 
     print("=== LangGraph 多模式流式传输演示 ===\n")
 
-    input_state = {
+    input_state: DiliState = {
         "question": "今天天气怎么样?",
         "answer": "",
         "confidence": 0.0,
