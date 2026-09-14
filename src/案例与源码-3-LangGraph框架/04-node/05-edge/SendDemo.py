@@ -93,7 +93,8 @@ def main():
     print(graph.get_graph().print_ascii())
 
     # 执行图
-    initial_state = {"subjects": [], "jokes": []}
+    # 标注为 DiliState：否则字面量被推断成普通 dict，赋不给 invoke 要求的 DiliState
+    initial_state: DiliState = {"subjects": [], "jokes": []}
     print("初始状态:", initial_state)
     print("\n开始执行图...")
 
