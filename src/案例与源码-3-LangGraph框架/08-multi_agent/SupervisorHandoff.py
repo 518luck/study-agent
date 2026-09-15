@@ -116,21 +116,35 @@ transfer_to_hotel_assistant = create_task_description_handoff_tool(
 
 # ===============================
 # 5. 定义  Agent （create_agent 新接口）
-# 这里不额外写长 prompt，而是更多依赖：
+# 主体仍依赖：
 # 1. 工具 schema / 名称 / docstring
 # 2. Handoff 工具本身描述的交接语义
 # 3. MessagesState 中持续携带的历史消息
+# 这里补一段短的 system_prompt 做行为约束：没有约束时模型可能反问细节、切换英文，
+# 且前一跳会把"让对方再确认"写进 task_description，导致交接后不执行而是追问。
+# 注意参数名是 system_prompt（langgraph 老接口 create_react_agent 才叫 prompt）
 # ===============================
 flight_assistant = create_agent(
     model=model,
     tools=[book_flight, transfer_to_hotel_assistant],  # 包含移交工具
     name="flight_assistant",
+    system_prompt=(
+        "你是航班预订助手，始终用中文回复，不要输出任何英文（包括工具调用前的说明）。"
+        "收到任务后直接用已有信息完成预订，不要向用户反问日期、舱位等细节。"
+        "航班订好后，若任务中还有酒店需求，调用 transfer_to_hotel_assistant 移交剩余任务，"
+        "并在 task_description 里写清已知信息，不要要求对方再向用户确认。"
+    ),
 )
 
 hotel_assistant = create_agent(
     model=model,
     tools=[book_hotel, transfer_to_flight_assistant],  # 包含移交工具
     name="hotel_assistant",
+    system_prompt=(
+        "你是酒店预订助手，始终用中文回复，不要输出任何英文（包括工具调用前的说明）。"
+        "收到任务后直接用任务中给出的酒店名称完成预订，不要反问入住日期、房型、分店等细节。"
+        "预订完成后简要汇报结果即可。"
+    ),
 )
 
 
